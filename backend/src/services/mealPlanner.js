@@ -10,14 +10,6 @@ function shuffle(arr) {
   return arr;
 }
 
-// Returns the slot label for a recipe based on its tags.
-function getSlot(tags) {
-  if (tags.includes('breakfast')) return 'breakfast';
-  if (tags.includes('lunch'))     return 'lunch';
-  if (tags.includes('dinner'))    return 'dinner';
-  if (tags.includes('snack'))     return 'snack';
-  return 'other';
-}
 
 // Generates all subsets of snacks with 0, 1, or 2 items.
 // With 3 snacks this produces 7 options: [], [s1], [s2], [s3], [s1,s2], [s1,s3], [s2,s3]
@@ -33,10 +25,12 @@ function snackSubsets(snacks) {
 }
 
 // Formats the chosen meals into the API response shape.
+// `slottedMeals` is an array of { recipe, slot } so the actual assigned slot
+// is used instead of guessing from the recipe's tags (fixes multi-tag recipes).
 // NUMERIC columns from PostgreSQL come back as strings — parseFloat handles that.
-function buildPlan(meals, targetCalories, macros, withinTolerance) {
-  const totals = meals.reduce(
-    (acc, m) => ({
+function buildPlan(slottedMeals, targetCalories, macros, withinTolerance) {
+  const totals = slottedMeals.reduce(
+    (acc, { recipe: m }) => ({
       calories: acc.calories + m.calories,
       protein:  acc.protein  + parseFloat(m.protein),
       carbs:    acc.carbs    + parseFloat(m.carbs),
@@ -46,8 +40,8 @@ function buildPlan(meals, targetCalories, macros, withinTolerance) {
   );
 
   return {
-    meals: meals.map(m => ({
-      slot:        getSlot(m.tags),
+    meals: slottedMeals.map(({ recipe: m, slot }) => ({
+      slot,
       id:          m.id,
       name:        m.name,
       calories:    m.calories,
@@ -92,6 +86,7 @@ function generateMealPlan(recipes, targetCalories, macros) {
   const subsets = snackSubsets(pools.snack);
 
   let bestMeals = null;
+  let bestSlots = null;
   let bestDiff  = Infinity;
 
   // Try every combination of breakfast × lunch × dinner × snack subset.
@@ -104,18 +99,24 @@ function generateMealPlan(recipes, targetCalories, macros) {
         for (const snacks of subsets) {
           // Skip any snack that duplicates a main meal
           if (snacks.some(s => s.id === breakfast.id || s.id === lunch.id || s.id === dinner.id)) continue;
-          const meals = [breakfast, lunch, dinner, ...snacks];
-          const total = meals.reduce((sum, m) => sum + m.calories, 0);
+          const recipes = [breakfast, lunch, dinner, ...snacks];
+          const total = recipes.reduce((sum, m) => sum + m.calories, 0);
 
           if (total >= lo && total <= hi) {
-            // Found a match within tolerance — return immediately.
-            return buildPlan(meals, targetCalories, macros, true);
+            const slotted = [
+              { recipe: breakfast, slot: 'breakfast' },
+              { recipe: lunch,     slot: 'lunch' },
+              { recipe: dinner,    slot: 'dinner' },
+              ...snacks.map(s => ({ recipe: s, slot: 'snack' })),
+            ];
+            return buildPlan(slotted, targetCalories, macros, true);
           }
 
           const diff = Math.abs(total - targetCalories);
           if (diff < bestDiff) {
             bestDiff  = diff;
-            bestMeals = meals;
+            bestMeals = [breakfast, lunch, dinner, ...snacks];
+            bestSlots = ['breakfast', 'lunch', 'dinner', ...snacks.map(() => 'snack')];
           }
         }
       }
@@ -123,9 +124,9 @@ function generateMealPlan(recipes, targetCalories, macros) {
   }
 
   // No combination hit the target — return the closest match with a warning flag.
-  // The controller will pass this through with a note for the frontend to display.
   if (bestMeals) {
-    return buildPlan(bestMeals, targetCalories, macros, false);
+    const slotted = bestMeals.map((recipe, i) => ({ recipe, slot: bestSlots[i] }));
+    return buildPlan(slotted, targetCalories, macros, false);
   }
 
   return null;

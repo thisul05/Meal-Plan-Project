@@ -5,7 +5,7 @@ const { generateMealPlan } = require('../services/mealPlanner');
 // Body: { targetCalories: number, macros: { protein, fat, carbs } }
 async function generate(req, res, next) {
   try {
-    const { targetCalories, macros } = req.body;
+    const { targetCalories, macros, country } = req.body;
 
     if (!targetCalories || !macros) {
       return res.status(400).json({ error: 'targetCalories and macros are required' });
@@ -15,7 +15,10 @@ async function generate(req, res, next) {
       return res.status(400).json({ error: 'targetCalories must be a number of at least 1000' });
     }
 
-    const recipesResult = await pool.query('SELECT * FROM recipes');
+    const useCountry = country && country !== 'all';
+    const recipesResult = useCountry
+      ? await pool.query('SELECT * FROM recipes WHERE country = $1', [country])
+      : await pool.query('SELECT * FROM recipes');
     const recipes = recipesResult.rows;
 
     const plan = generateMealPlan(recipes, targetCalories, macros);

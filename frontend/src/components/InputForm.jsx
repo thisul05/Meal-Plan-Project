@@ -1,12 +1,42 @@
 import { useState } from 'react';
 import { validateProfileForm, hasErrors } from '../utils/validation';
 
-const ACTIVITY_OPTIONS = [
-  { value: 'sedentary',   label: '🪑  Sedentary — desk job, no exercise' },
-  { value: 'light',       label: '🚶  Light — exercise 1–3 days/week' },
-  { value: 'moderate',    label: '🏃  Moderate — exercise 3–5 days/week' },
-  { value: 'active',      label: '💪  Active — exercise 6–7 days/week' },
-  { value: 'very_active', label: '🔥  Very Active — physical job + daily training' },
+const ACTIVITY_CARDS = [
+  {
+    value: 'sedentary',
+    emoji: '🛋️',
+    title: 'Sedentary',
+    desc: 'Desk job',
+    detail: 'Little or no exercise',
+  },
+  {
+    value: 'light',
+    emoji: '🚶',
+    title: 'Lightly Active',
+    desc: '1–3×/week',
+    detail: 'Walking or light gym',
+  },
+  {
+    value: 'moderate',
+    emoji: '🏃',
+    title: 'Moderate',
+    desc: '3–5×/week',
+    detail: 'Gym or sport regularly',
+  },
+  {
+    value: 'active',
+    emoji: '💪',
+    title: 'Very Active',
+    desc: '6–7×/week',
+    detail: 'Hard daily training',
+  },
+  {
+    value: 'very_active',
+    emoji: '🔥',
+    title: 'Athlete',
+    desc: 'Twice/day',
+    detail: 'Physical job + gym',
+  },
 ];
 
 const GOALS = [
@@ -15,9 +45,14 @@ const GOALS = [
   { value: 'gain',     label: '📈 Gain Weight' },
 ];
 
-const EMPTY = { age: '', weight: '', height: '', sex: '', activityLevel: '', goal: '' };
+const COUNTRIES = [
+  { value: 'all',       flag: '🌍', name: 'International', desc: 'All cuisines' },
+  { value: 'Sri Lanka', flag: '🇱🇰', name: 'Sri Lanka',     desc: 'Sri Lankan food' },
+];
 
-function InputForm({ onSubmit, loading }) {
+const EMPTY = { age: '', weight: '', height: '', sex: '', activityLevel: '', goal: '', country: 'all' };
+
+export default function InputForm({ onSubmit, loading }) {
   const [form, setForm]     = useState(EMPTY);
   const [errors, setErrors] = useState({});
 
@@ -27,9 +62,18 @@ function InputForm({ onSubmit, loading }) {
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: undefined }));
   }
 
+  function handleActivity(value) {
+    setForm(prev => ({ ...prev, activityLevel: value }));
+    if (errors.activityLevel) setErrors(prev => ({ ...prev, activityLevel: undefined }));
+  }
+
   function handleGoal(value) {
     setForm(prev => ({ ...prev, goal: value }));
     if (errors.goal) setErrors(prev => ({ ...prev, goal: undefined }));
+  }
+
+  function handleCountry(value) {
+    setForm(prev => ({ ...prev, country: value }));
   }
 
   function handleSubmit(e) {
@@ -44,6 +88,7 @@ function InputForm({ onSubmit, loading }) {
     <form className="card" onSubmit={handleSubmit} noValidate>
       <h2><span className="section-emoji">👤</span> Your Profile</h2>
 
+      {/* Age / Weight */}
       <div className="form-row">
         <div className="form-group">
           <label htmlFor="age">Age (years)</label>
@@ -61,6 +106,7 @@ function InputForm({ onSubmit, loading }) {
         </div>
       </div>
 
+      {/* Height / Sex */}
       <div className="form-row">
         <div className="form-group">
           <label htmlFor="height">Height (cm)</label>
@@ -83,18 +129,29 @@ function InputForm({ onSubmit, loading }) {
         </div>
       </div>
 
+      {/* Activity Level — visual cards */}
       <div className="form-group" style={{ marginBottom: '1rem' }}>
-        <label htmlFor="activityLevel">Activity Level</label>
-        <select id="activityLevel" name="activityLevel"
-          value={form.activityLevel} onChange={handleChange}
-          className={errors.activityLevel ? 'has-error' : ''}>
-          <option value="">Select your activity level…</option>
-          {ACTIVITY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-        {errors.activityLevel && <span className="field-error">{errors.activityLevel}</span>}
+        <label style={{ display: 'block', marginBottom: '.6rem' }}>Activity Level</label>
+        <div className="activity-grid">
+          {ACTIVITY_CARDS.map(card => (
+            <button
+              key={card.value}
+              type="button"
+              className={`activity-card${form.activityLevel === card.value ? ' active' : ''}`}
+              onClick={() => handleActivity(card.value)}
+            >
+              <span className="ac-emoji">{card.emoji}</span>
+              <span className="ac-title">{card.title}</span>
+              <span className="ac-desc">{card.desc}</span>
+              <span className="ac-detail">{card.detail}</span>
+            </button>
+          ))}
+        </div>
+        {errors.activityLevel && <span className="field-error" style={{ marginTop: '.35rem', display: 'block' }}>{errors.activityLevel}</span>}
       </div>
 
-      <div className="form-group">
+      {/* Goal */}
+      <div className="form-group" style={{ marginBottom: '1rem' }}>
         <label>Goal</label>
         <div className="segment-group">
           {GOALS.map(g => (
@@ -108,11 +165,33 @@ function InputForm({ onSubmit, loading }) {
         {errors.goal && <span className="field-error">{errors.goal}</span>}
       </div>
 
+      {/* Cuisine / Country */}
+      <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+        <label style={{ display: 'block', marginBottom: '.6rem' }}>
+          Cuisine Preference
+          <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: 'var(--gray-400)', marginLeft: '.4rem', fontSize: '.7rem' }}>
+            — filters the meal plan to foods from that country
+          </span>
+        </label>
+        <div className="country-grid">
+          {COUNTRIES.map(c => (
+            <button
+              key={c.value}
+              type="button"
+              className={`country-card${form.country === c.value ? ' active' : ''}`}
+              onClick={() => handleCountry(c.value)}
+            >
+              <span className="cc-flag">{c.flag}</span>
+              <span className="cc-name">{c.name}</span>
+              <span className="cc-desc">{c.desc}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <button type="submit" className="btn-primary" disabled={loading}>
         {loading ? '⏳ Calculating…' : '🚀 Calculate My Nutrition'}
       </button>
     </form>
   );
 }
-
-export default InputForm;

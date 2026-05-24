@@ -12,6 +12,7 @@ function Home() {
   const { user, token } = useAuth();
 
   const [nutritionResult, setNutritionResult] = useState(null);
+  const [country, setCountry]                 = useState('all');
   const [mealPlan, setMealPlan]               = useState(null);
   const [calcLoading, setCalcLoading]         = useState(false);
   const [planLoading, setPlanLoading]         = useState(false);
@@ -29,7 +30,7 @@ function Home() {
     try {
       const result = await calculateNutrition(profileData);
       setNutritionResult(result);
-      // Store targets in localStorage so the Diary page can show progress vs goals
+      setCountry(profileData.country || 'all');
       localStorage.setItem('nutritionTargets', JSON.stringify(result));
     } catch (err) {
       setError(err.message);
@@ -43,7 +44,7 @@ function Home() {
     setError(null);
     setSavedMsg('');
     try {
-      const plan = await generateMealPlan(nutritionResult.targetCalories, nutritionResult.macros);
+      const plan = await generateMealPlan(nutritionResult.targetCalories, nutritionResult.macros, country);
       setMealPlan(plan);
     } catch (err) {
       setError(err.message);
