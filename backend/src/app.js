@@ -16,8 +16,11 @@ const app = express();
 // Parse JSON request bodies
 app.use(express.json());
 
-// Allow requests from the Vite dev server (port 5173)
-app.use(cors({ origin: 'http://localhost:5173' }));
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+app.use(cors({ origin: allowedOrigins }));
 
 // Interactive API docs — visit http://localhost:3000/api-docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

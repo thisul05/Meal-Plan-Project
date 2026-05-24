@@ -1,7 +1,9 @@
 // All fetch calls to the backend live here.
 // Components import these functions — they never call fetch() directly.
 
-const BASE = '/api';
+// In dev the Vite proxy forwards /api → localhost:3000 so no env var is needed.
+// In production (Vercel) VITE_API_URL must be set to the Render backend URL.
+const BASE = import.meta.env.VITE_API_URL || '/api';
 
 // Helper: builds headers, attaching the JWT if a token is provided
 function headers(token) {
