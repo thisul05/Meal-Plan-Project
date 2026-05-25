@@ -25,6 +25,23 @@ function ResultsCard({ result }) {
         </div>
       </div>
 
+      {/* BMI gauge */}
+      <div className="bmi-gauge">
+        <div className="bmi-gauge-track">
+          <div className="bmi-gauge-seg bmi-seg-underweight" />
+          <div className="bmi-gauge-seg bmi-seg-normal" />
+          <div className="bmi-gauge-seg bmi-seg-overweight" />
+          <div className="bmi-gauge-seg bmi-seg-obese" />
+          <div className="bmi-gauge-marker" style={{ left: `${Math.min(Math.max(((bmi - 10) / 30) * 100, 2), 98)}%` }} />
+        </div>
+        <div className="bmi-gauge-labels">
+          <span>Underweight<br/>&lt;18.5</span>
+          <span>Normal<br/>18.5–25</span>
+          <span>Overweight<br/>25–30</span>
+          <span>Obese<br/>&gt;30</span>
+        </div>
+      </div>
+
       <div className="target-box">
         <div className="target-label">🎯 Daily Calorie Target</div>
         <div className="target-value">

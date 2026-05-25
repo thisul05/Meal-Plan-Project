@@ -67,32 +67,106 @@ function calculateMacros(targetCalories, weight) {
 }
 
 // --- Advice ---
-function generateAdvice(goal, bmiCategory) {
-  const lines = {
+function generateAdvice(goal, bmiCategory, age) {
+  const bmiSections = {
+    underweight: {
+      type: 'warning',
+      headline: 'Your BMI is below the healthy range (18.5–24.9)',
+      tips: [
+        'Focus on nutrient-dense, calorie-rich foods — nuts, avocado, whole grains, legumes.',
+        'Aim for 3 main meals and 2–3 snacks daily to build a steady calorie surplus.',
+        'Prioritise protein at every meal to support healthy weight gain and muscle.',
+        'Speak with a doctor or registered dietitian for personalised guidance.',
+      ],
+    },
+    normal: {
+      type: 'success',
+      headline: 'Your BMI is in the healthy range — great work!',
+      tips: [
+        'Consistent meal timing and adequate protein help sustain energy and body composition.',
+        'Regular physical activity protects your weight and overall health long term.',
+      ],
+    },
+    overweight: {
+      type: 'warning',
+      headline: 'Your BMI is in the overweight range',
+      tips: [
+        'Even a 5–10% reduction in body weight significantly improves energy, joints, and heart health.',
+        'A moderate deficit of 300–500 kcal/day is sustainable and avoids muscle loss.',
+        'Prioritise vegetables, lean protein, and whole grains to feel fuller with fewer calories.',
+        'Adding 30 minutes of moderate activity most days makes a meaningful difference.',
+      ],
+    },
+    obese: {
+      type: 'danger',
+      headline: 'Your BMI is in the obese range',
+      tips: [
+        'We recommend consulting your doctor or a dietitian before making major dietary changes.',
+        'Even a 5% reduction in body weight can significantly lower risk of diabetes, heart disease, and joint pain.',
+        'Focus on sustainability — small consistent daily habits are more powerful than extreme diets.',
+        'Every healthy meal is a step forward. Progress matters far more than perfection.',
+        'Track energy levels, sleep quality, and mood alongside calories for a fuller health picture.',
+      ],
+    },
+  };
+
+  const goalTips = {
     lose: [
-      'A moderate calorie deficit is a sustainable approach to fat loss.',
-      'Prioritising protein will help preserve muscle while in a deficit.',
-      'Aim for consistent daily habits — slow progress beats quick fixes.',
+      'A moderate calorie deficit is the most sustainable approach to fat loss.',
+      'Prioritising protein preserves muscle while in a deficit.',
+      'Slow, steady progress (0.5–1 kg/week) is far more maintainable than rapid loss.',
     ],
     maintain: [
       'Maintaining weight is about matching your energy intake to your output.',
-      'Consistent meal timing and high-protein foods support satiety.',
+      'Consistent meal timing and high-protein foods support long-term satiety.',
       'Small adjustments over time are more effective than big restrictions.',
     ],
     gain: [
-      'A moderate surplus supports muscle growth without excessive fat gain.',
-      'Distributing protein across meals maximises muscle protein synthesis.',
-      'Strength training alongside adequate calories drives quality gains.',
+      'A moderate surplus (300–500 kcal above TDEE) supports muscle growth without excess fat.',
+      'Distribute protein evenly across meals to maximise muscle protein synthesis.',
+      'Strength training alongside adequate calories drives quality, lean mass gains.',
     ],
   };
 
-  const advice = lines[goal] || [];
-
-  if (bmiCategory === 'underweight') {
-    advice.push('Your BMI suggests you may benefit from discussing your goals with a healthcare professional.');
+  let ageTips = null;
+  if (typeof age === 'number' && age < 18) {
+    ageTips = {
+      headline: 'Advice for Young People',
+      tips: [
+        'Young bodies are still developing — avoid extreme calorie restriction.',
+        'Focus on balanced, nutritious meals that fuel both your body and mind.',
+        'Regular physical activity now builds lifelong habits and stronger bones.',
+      ],
+    };
+  } else if (typeof age === 'number' && age >= 40 && age < 60) {
+    ageTips = {
+      headline: 'Advice for Your Life Stage (40s & 50s)',
+      tips: [
+        'Metabolism slows by only 1–2% per decade — very manageable with consistent habits.',
+        'Strength training 2–3× per week is the best way to maintain muscle and metabolic rate.',
+        'Protein needs increase with age — aim for the higher end of your target to protect muscle.',
+        'Prioritising 7–9 hours of sleep and managing stress is as important as diet.',
+        'Many people achieve their best health in their 40s and 50s — you are right on time.',
+      ],
+    };
+  } else if (typeof age === 'number' && age >= 60) {
+    ageTips = {
+      headline: 'Advice for Your Life Stage (60+)',
+      tips: [
+        'Staying active is the single most powerful factor for healthy ageing — even gentle walking counts.',
+        'Protein is critical after 60 to prevent muscle loss. Aim for 1.6–2 g per kg of body weight.',
+        'Focus on nutrient-dense foods to meet your vitamin D, calcium, and B12 needs.',
+        'Hydration is often underestimated — aim for 6–8 glasses of water every day.',
+        'It is never too late to improve your health. Consistent small steps create lasting change.',
+      ],
+    };
   }
 
-  return advice;
+  return {
+    bmiAlert: bmiSections[bmiCategory] || null,
+    goalTips: goalTips[goal] || [],
+    ageTips,
+  };
 }
 
 module.exports = {

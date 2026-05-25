@@ -12,7 +12,7 @@ async function calculate(req, res, next) {
     const bmiCategory = calculations.getBMICategory(bmi);
     const targetCalories = calculations.calculateTargetCalories(tdee, goal, sex);
     const macros = calculations.calculateMacros(targetCalories, weight);
-    const advice = calculations.generateAdvice(goal, bmiCategory);
+    const advice = calculations.generateAdvice(goal, bmiCategory, age);
 
     res.json({
       bmr: Math.round(bmr),

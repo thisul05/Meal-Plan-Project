@@ -504,3 +504,78 @@ input.has-error, select.has-error { border-color: var(--red); }
   font-size: .875rem; color: var(--red); margin-bottom: 1rem;
   display: flex; gap: .5rem; align-items: center;
 }
+
+/* ── BMI gauge ───────────────────────────────────────── */
+.bmi-gauge { margin-bottom: 1.1rem; }
+.bmi-gauge-track {
+  position: relative; height: 12px; border-radius: 99px;
+  display: flex; overflow: visible; margin-bottom: .4rem;
+}
+.bmi-gauge-seg {
+  height: 100%; flex: 1;
+}
+.bmi-gauge-seg:first-child { border-radius: 99px 0 0 99px; }
+.bmi-gauge-seg:last-child  { border-radius: 0 99px 99px 0; }
+.bmi-seg-underweight { background: #fbbf24; flex: 1.2; }
+.bmi-seg-normal      { background: #22c55e; flex: 2.2; }
+.bmi-seg-overweight  { background: #f97316; flex: 1.6; }
+.bmi-seg-obese       { background: #ef4444; flex: 2; }
+.bmi-gauge-marker {
+  position: absolute; top: 50%; transform: translate(-50%, -50%);
+  width: 18px; height: 18px; background: white;
+  border: 3px solid var(--gray-900); border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  transition: left .6s cubic-bezier(.34,1.56,.64,1);
+}
+.bmi-gauge-labels {
+  display: flex; justify-content: space-between;
+  font-size: .62rem; color: var(--gray-400); font-weight: 600;
+  text-transform: uppercase; letter-spacing: .04em; line-height: 1.3; text-align: center;
+}
+.bmi-gauge-labels span { flex: 1; }
+
+/* ── Advice card sections ────────────────────────────── */
+.advice-card .advice-list li { background: var(--gray-50); border-left-color: var(--blue); }
+.advice-card .advice-list li::before { content: '→'; color: var(--gray-400); }
+
+.advice-section {
+  border-radius: var(--radius-sm); padding: 1rem 1.1rem;
+  margin-bottom: .875rem;
+  background: var(--gray-50); border: 1.5px solid var(--gray-200);
+}
+.advice-section:last-child { margin-bottom: 0; }
+
+.advice-section-header {
+  display: flex; align-items: center; gap: .6rem; margin-bottom: .75rem;
+}
+.advice-section-icon { font-size: 1.2rem; flex-shrink: 0; }
+.advice-section-title {
+  font-size: .9rem; font-weight: 800; color: var(--gray-900);
+}
+
+.advice-motivation {
+  background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+  border-color: #c4b5fd;
+}
+.advice-motivation-title { color: var(--purple); }
+
+/* ── Enhanced header ─────────────────────────────────── */
+.app-header h1 { font-size: 2.4rem; }
+.app-header p  { font-size: 1rem; opacity: .85; letter-spacing: .04em; }
+
+/* ── Card polish ─────────────────────────────────────── */
+.card { border: 1px solid var(--gray-100); }
+.card h2 { font-size: 1.15rem; font-weight: 800; }
+
+/* ── Stat box pop ────────────────────────────────────── */
+.stat-box:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.stat-box .stat-value { font-size: 2rem; color: var(--blue); }
+
+/* ── Target box upgrade ──────────────────────────────── */
+.target-box {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  border: none; color: white;
+}
+.target-box .target-label { color: rgba(255,255,255,.75); }
+.target-box .target-value { color: white; font-size: 3rem; }
+.target-box .target-unit  { color: rgba(255,255,255,.7); font-size: 1.1rem; }
