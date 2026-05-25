@@ -5,20 +5,29 @@ const { generateMealPlan } = require('../services/mealPlanner');
 // Body: { targetCalories: number, macros: { protein, fat, carbs } }
 async function generate(req, res, next) {
   try {
-    const { targetCalories, macros, country } = req.body;
+    const { targetCalories, macros, country, age } = req.body;
 
     if (!targetCalories || !macros) {
       return res.status(400).json({ error: 'targetCalories and macros are required' });
     }
 
-    if (typeof targetCalories !== 'number' || targetCalories < 1000) {
-      return res.status(400).json({ error: 'targetCalories must be a number of at least 1000' });
+    if (typeof targetCalories !== 'number' || targetCalories < 500) {
+      return res.status(400).json({ error: 'targetCalories must be a number of at least 500' });
     }
 
-    const useCountry = country && country !== 'all';
-    const recipesResult = useCountry
-      ? await pool.query('SELECT * FROM recipes WHERE country = $1', [country])
-      : await pool.query('SELECT * FROM recipes');
+    const isKids = typeof age === 'number' && age < 13;
+    const selectedCountry = (country && country !== 'all') ? country : 'International';
+
+    let query, params;
+    if (isKids) {
+      query  = `SELECT * FROM recipes WHERE country = $1 AND 'kids-friendly' = ANY(tags)`;
+      params = [selectedCountry];
+    } else {
+      query  = `SELECT * FROM recipes WHERE country = $1`;
+      params = [selectedCountry];
+    }
+
+    const recipesResult = await pool.query(query, params);
     const recipes = recipesResult.rows;
 
     const plan = generateMealPlan(recipes, targetCalories, macros);

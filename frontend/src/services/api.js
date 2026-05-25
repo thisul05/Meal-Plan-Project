@@ -40,9 +40,9 @@ export async function fetchRecipes() {
 
 // ── Meal Plan ────────────────────────────────────────────────────────────────
 
-export async function generateMealPlan(targetCalories, macros, country = 'all') {
+export async function generateMealPlan(targetCalories, macros, country = 'all', age = null) {
   const res = await fetch(`${BASE}/mealplan/generate`, {
-    method: 'POST', headers: headers(), body: JSON.stringify({ targetCalories, macros, country }),
+    method: 'POST', headers: headers(), body: JSON.stringify({ targetCalories, macros, country, age }),
   });
   return handleResponse(res);
 }

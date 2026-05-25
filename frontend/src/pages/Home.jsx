@@ -13,6 +13,7 @@ function Home() {
 
   const [nutritionResult, setNutritionResult] = useState(null);
   const [country, setCountry]                 = useState('all');
+  const [age, setAge]                         = useState(null);
   const [mealPlan, setMealPlan]               = useState(null);
   const [calcLoading, setCalcLoading]         = useState(false);
   const [planLoading, setPlanLoading]         = useState(false);
@@ -31,6 +32,7 @@ function Home() {
       const result = await calculateNutrition(profileData);
       setNutritionResult(result);
       setCountry(profileData.country || 'all');
+      setAge(profileData.age);
       localStorage.setItem('nutritionTargets', JSON.stringify(result));
     } catch (err) {
       setError(err.message);
@@ -44,7 +46,7 @@ function Home() {
     setError(null);
     setSavedMsg('');
     try {
-      const plan = await generateMealPlan(nutritionResult.targetCalories, nutritionResult.macros, country);
+      const plan = await generateMealPlan(nutritionResult.targetCalories, nutritionResult.macros, country, age);
       setMealPlan(plan);
     } catch (err) {
       setError(err.message);
