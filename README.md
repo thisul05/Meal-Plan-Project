@@ -40,7 +40,7 @@ Meal Plan Project/
 cd backend
 cp .env.example .env        # fill in your DB credentials
 npm install
-npm run dev                 # starts on http://localhost:3000
+npm run dev                 # starts on http://localhost:3001
 ```
 
 ### 2. Frontend

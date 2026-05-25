@@ -8,7 +8,7 @@ const options = {
       version: '1.0.0',
       description: 'REST API for calculating nutrition targets and generating meal plans.',
     },
-    servers: [{ url: 'http://localhost:3000' }],
+    servers: [{ url: 'http://localhost:3001' }],
     components: {
       schemas: {
         UserProfile: {

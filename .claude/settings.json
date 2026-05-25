@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Program Files/PostgreSQL/**)",
+      "Read(//c//**)",
+      "Read(//c/Program Files//**)",
+      "Read(//mnt/c/**)",
+      "PowerShell([System.Environment]::GetEnvironmentVariable\\(\"Path\", \"Machine\"\\) | Select-String \"PostgreSQL\")",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\", \"User\"\\); & \"C:\\\\Program Files\\\\PostgreSQL\\\\18\\\\bin\\\\psql.exe\" --version)",
+      "Bash(npm install *)",
+      "Bash(npm audit *)",
+      "Bash(npm test *)",
+      "Bash(node server.js)",
+      "Bash(curl -s http://localhost:3001/api/health)",
+      "Bash(pkill -f \"node server.js\")",
+      "Bash(npm run *)",
+      "Bash(node -e ' *)",
+      "Bash(node -e \"require\\('dotenv'\\).config\\(\\); const pool = require\\('./src/config/db'\\); pool.query\\('SELECT NOW\\(\\)'\\).then\\(r => { console.log\\('DB connected:', r.rows[0].now\\); pool.end\\(\\); }\\).catch\\(e => { console.error\\('DB error:', e.message\\); pool.end\\(\\); }\\);\")",
+      "Bash(node -e \"require\\('dotenv'\\).config\\(\\); console.log\\('JWT_SECRET set:', !!process.env.JWT_SECRET, '| USDA_KEY set:', !!process.env.USDA_API_KEY, '| PORT:', process.env.PORT || 3000\\);\")",
+      "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(32\\).toString\\('hex'\\)\\)\")",
+      "Bash(curl -s -X POST http://localhost:3001/api/auth/register -H 'Content-Type: application/json' -d '{\"name\":\"Test User\",\"email\":\"test@example.com\",\"password\":\"Password123!\"}')",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3001/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"test@example.com\",\"password\":\"Password123!\"}')",
+      "Bash(curl -s 'http://localhost:3001/api/auth/verify?token=006bb034a65c2be4efc4d8448d08f7812b1c6145b32ee5e98b48eb0d3fddc8f4825c3ceecda7d385a625c97bffdac0e8')",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); console.log\\('has token:', !!j.token, '| user:', j.user?.email\\);\")",
+      "Bash(curl -s -X POST http://localhost:3001/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"test@example.com\",\"password\":\"Password123!\"}')",
+      "Bash(git reset *)",
+      "Bash(git update-ref *)",
+      "Bash(git rm *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
+      "Read(//tmp/**)",
+      "PowerShell(Stop-Process -Name node -Force -ErrorAction SilentlyContinue)",
+      "Bash(node -e \"require\\('dotenv'\\).config\\(\\); console.log\\('JWT_SECRET set:', !!process.env.JWT_SECRET, '| length:', process.env.JWT_SECRET?.length\\);\")",
+      "Bash(git commit -m 'chore: add Vercel serverless config for backend *)"
+    ]
+  }
+}

@@ -9,7 +9,7 @@ export default defineConfig({
       // Any request starting with /api is forwarded to the Express server.
       // This means frontend code always calls /api/... — no hardcoded localhost URLs.
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:3001',
         changeOrigin: true,
       },
     },

@@ -22,7 +22,7 @@ const allowedOrigins = [
 ].filter(Boolean);
 app.use(cors({ origin: allowedOrigins }));
 
-// Interactive API docs — visit http://localhost:3000/api-docs
+// Interactive API docs — visit http://localhost:3001/api-docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Health check — useful to verify the server is up
