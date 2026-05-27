@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import Navbar       from './components/Navbar';
-import Home         from './pages/Home';
+import Navbar          from './components/Navbar';
+import PageBackground  from './components/PageBackground';
+import Home            from './pages/Home';
 import Login        from './pages/Login';
 import Register     from './pages/Register';
 import VerifyEmail  from './pages/VerifyEmail';
@@ -12,6 +13,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <PageBackground />{/* BACKGROUND IMAGES — remove this line + its import to disable */}
         <Navbar />
         <Routes>
           <Route path="/"             element={<Home />} />
