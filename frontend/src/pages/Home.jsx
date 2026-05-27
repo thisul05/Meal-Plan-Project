@@ -93,8 +93,23 @@ function Home() {
   return (
     <>
       <header className="app-header">
-        <h1>Nutrition &amp; Meal Planner</h1>
-        <p>BMR · TDEE · BMI · Macros · Daily Meal Plan</p>
+        <div className="header-deco" aria-hidden="true">
+          <span style={{top:'12%',  left:'6%',  fontSize:'2.4rem', animationDelay:'0s'}}>🥗</span>
+          <span style={{top:'65%',  left:'4%',  fontSize:'1.8rem', animationDelay:'1.2s'}}>🍎</span>
+          <span style={{top:'20%',  left:'18%', fontSize:'1.5rem', animationDelay:'2.1s'}}>🥦</span>
+          <span style={{top:'75%',  left:'22%', fontSize:'2rem',   animationDelay:'0.6s'}}>🍋</span>
+          <span style={{top:'10%',  right:'7%', fontSize:'2.2rem', animationDelay:'1.8s'}}>🍇</span>
+          <span style={{top:'60%',  right:'5%', fontSize:'1.7rem', animationDelay:'0.3s'}}>🥕</span>
+          <span style={{top:'30%',  right:'17%',fontSize:'1.6rem', animationDelay:'2.5s'}}>🫐</span>
+          <span style={{top:'80%',  right:'22%',fontSize:'1.9rem', animationDelay:'1s'}}>🥑</span>
+          <span style={{top:'45%',  left:'10%', fontSize:'1.4rem', animationDelay:'3s'}}>🌾</span>
+          <span style={{top:'50%',  right:'11%',fontSize:'1.4rem', animationDelay:'1.5s'}}>🍊</span>
+        </div>
+        <div className="header-content">
+          <div className="header-badge">🥗 Personalised Nutrition</div>
+          <h1>Nutrition &amp; Meal Planner</h1>
+          <p>Calculate your BMR · TDEE · BMI · Macros and get a personalised daily meal plan</p>
+        </div>
       </header>
 
       <main className="page">

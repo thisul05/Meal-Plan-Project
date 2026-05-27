@@ -145,17 +145,23 @@
 /* ── Base ────────────────────────────────────────────── */
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background: #f0f4ff;
   color: var(--gray-900);
   line-height: 1.6;
   min-height: 100vh;
+  background-color: #eef2ff;
+  background-image:
+    radial-gradient(ellipse at 15% 15%, rgba(219,234,254,.85) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 10%, rgba(237,233,254,.7)  0%, transparent 40%),
+    radial-gradient(ellipse at 50% 90%, rgba(209,250,229,.6)  0%, transparent 45%),
+    radial-gradient(rgba(99,102,241,.035) 1px, transparent 1px);
+  background-size: auto, auto, auto, 28px 28px;
 }
 
 /* ── Header ──────────────────────────────────────────── */
 .app-header {
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #7c3aed 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 30%, #2563eb 65%, #7c3aed 100%);
   color: white;
-  padding: 2.5rem 1rem 3.5rem;
+  padding: 3rem 1rem 4.5rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -163,21 +169,54 @@ body {
 .app-header::before {
   content: '';
   position: absolute; inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(120,53,235,.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(37,99,235,.3)   0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
 }
 .app-header::after {
   content: '';
-  position: absolute; bottom: -1px; left: 0; right: 0; height: 40px;
-  background: #f0f4ff;
-  clip-path: ellipse(55% 100% at 50% 100%);
+  position: absolute; bottom: -1px; left: 0; right: 0; height: 50px;
+  background: linear-gradient(to bottom, #dde6ff, #eef2ff);
+  clip-path: ellipse(60% 100% at 50% 100%);
+}
+
+/* floating food decorations */
+.header-deco {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.header-deco span {
+  position: absolute;
+  animation: hfloat 7s ease-in-out infinite;
+  opacity: .18; filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
+  user-select: none;
+}
+@keyframes hfloat {
+  0%,100% { transform: translateY(0) rotate(-4deg) scale(1); }
+  50%      { transform: translateY(-14px) rotate(6deg) scale(1.08); }
+}
+
+.header-content { position: relative; }
+.header-badge {
+  display: inline-block;
+  background: rgba(255,255,255,.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 99px;
+  padding: .35rem 1rem;
+  font-size: .8rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; margin-bottom: 1rem;
+  color: rgba(255,255,255,.9);
 }
 .app-header h1 {
-  font-size: 2rem; font-weight: 900; letter-spacing: -.03em;
-  position: relative; text-shadow: 0 2px 12px rgba(0,0,0,.2);
+  font-size: 2.6rem; font-weight: 900; letter-spacing: -.04em;
+  position: relative; text-shadow: 0 2px 20px rgba(0,0,0,.3);
+  line-height: 1.1; margin-bottom: .6rem;
 }
 .app-header p {
-  font-size: .9rem; opacity: .8; margin-top: .4rem;
-  letter-spacing: .06em; position: relative;
+  font-size: 1rem; opacity: .8; margin-top: .4rem;
+  letter-spacing: .02em; position: relative;
+  max-width: 480px; margin-inline: auto;
 }
 
 /* ── Layout ──────────────────────────────────────────── */
@@ -559,12 +598,12 @@ input.has-error, select.has-error { border-color: var(--red); }
 }
 .advice-motivation-title { color: var(--purple); }
 
-/* ── Enhanced header ─────────────────────────────────── */
-.app-header h1 { font-size: 2.4rem; }
-.app-header p  { font-size: 1rem; opacity: .85; letter-spacing: .04em; }
-
 /* ── Card polish ─────────────────────────────────────── */
-.card { border: 1px solid var(--gray-100); }
+.card {
+  border: 1px solid rgba(255,255,255,.8);
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(4px);
+}
 .card h2 { font-size: 1.15rem; font-weight: 800; }
 
 /* ── Stat box pop ────────────────────────────────────── */
