@@ -56,7 +56,12 @@ const RECIPE_IMAGES = {
     'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
   'roti with lunu miris':
     'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=640&h=420&fit=crop',
-  // string hoppers, egg hoppers, pittu, kiribath — no accurate Unsplash photos (see note below)
+  'string hoppers with kiri hodi':
+    'https://i.imgur.com/2JvOt3U.jpg',
+  'pittu with coconut milk':
+    'https://i.imgur.com/xFJyyJL.jpg',
+  'kiribath (milk rice)':
+    'https://i.imgur.com/iDSSPrG.jpg',
 
   /* ── Sri Lankan · Lunch / Dinner ─────────────────────────────────────── */
   'chicken kottu roti':
@@ -75,7 +80,8 @@ const RECIPE_IMAGES = {
     'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
   'sri lankan chicken biryani':
     'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=640&h=420&fit=crop',
-  // lamprais, hoppers with egg curry — no accurate Unsplash photos (see note below)
+  'lamprais':
+    'https://i.imgur.com/iZSBR6Y.jpg',
 
   /* ── Sri Lankan · Snacks ─────────────────────────────────────────────── */
   'masala vade':
@@ -84,7 +90,10 @@ const RECIPE_IMAGES = {
     'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=640&h=420&fit=crop',
   'kadala curry (black chickpea curry)':
     'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
-  // kokis, pol pani pancakes — no accurate Unsplash photos (see note below)
+  'kokis':
+    'https://i.imgur.com/Y3wAAvK.jpg',
+  'pol pani pancakes (pani pol)':
+    'https://i.imgur.com/yBcrbsO.jpg',
 
   /* ── Sri Lankan · Complete plates ───────────────────────────────────── */
   'rice with fish ambul thiyal, parippu & sambol':
