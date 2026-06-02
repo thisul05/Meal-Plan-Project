@@ -50,8 +50,6 @@ const RECIPE_IMAGES = {
     'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=640&h=420&fit=crop',
 
   /* ── Sri Lankan · Breakfast ──────────────────────────────────────────── */
-  'sri lankan rice and curry':
-    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
   'parippu curry with pol roti':
     'https://i.imgur.com/ba0Imeg.jpg',
   'egg hoppers':
@@ -82,8 +80,6 @@ const RECIPE_IMAGES = {
     'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
   'mukunuwenna mallum with rice':
     'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
-  'sri lankan chicken biryani':
-    'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=640&h=420&fit=crop',
   'lamprais':
     'https://i.imgur.com/iZSBR6Y.jpg',
 
@@ -100,18 +96,8 @@ const RECIPE_IMAGES = {
     'https://i.imgur.com/yBcrbsO.jpg',
 
   /* ── Sri Lankan · Complete plates ───────────────────────────────────── */
-  'rice with fish ambul thiyal, parippu & sambol':
-    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
   'rice with prawn curry, parippu & pol sambol':
     'https://images.unsplash.com/photo-1565365474-9dc55ca2af1f?w=640&h=420&fit=crop',
-  'rice with jackfruit curry, parippu & pol sambol':
-    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
-  'rice with gotukola mallum, parippu & sambol':
-    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
-  'rice with mukunuwenna mallum, parippu & sambol':
-    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
-  'rice with chicken curry, parippu & sambol':
-    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
 };
 
 // Slot-based fallback when no name match is found
