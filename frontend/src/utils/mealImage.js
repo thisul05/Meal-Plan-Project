@@ -53,7 +53,7 @@ const RECIPE_IMAGES = {
   'sri lankan rice and curry':
     'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
   'parippu curry with pol roti':
-    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+    'https://i.imgur.com/ba0Imeg.jpg',
   'egg hoppers':
     'https://i.imgur.com/sA8A1Jk.jpg',
   'hoppers with egg curry and pol sambol':
@@ -69,13 +69,13 @@ const RECIPE_IMAGES = {
 
   /* ── Sri Lankan · Lunch / Dinner ─────────────────────────────────────── */
   'chicken kottu roti':
-    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+    'https://i.imgur.com/LMgSGfq.jpg',
   'fish ambul thiyal with rice':
     'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=640&h=420&fit=crop',
   'jackfruit curry (polos) with rice':
     'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
   'devilled chicken with fried rice':
-    'https://images.unsplash.com/photo-1598103442097-8b74394b95c3?w=640&h=420&fit=crop',
+    'https://i.imgur.com/CbgylJB.jpg',
   'prawn curry with rice':
     'https://images.unsplash.com/photo-1565365474-9dc55ca2af1f?w=640&h=420&fit=crop',
   'gotukola mallum with rice':
@@ -89,11 +89,11 @@ const RECIPE_IMAGES = {
 
   /* ── Sri Lankan · Snacks ─────────────────────────────────────────────── */
   'masala vade':
-    'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=640&h=420&fit=crop',
+    'https://i.imgur.com/hLvUzpu.jpg',
   'thala guli (sesame balls)':
-    'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=640&h=420&fit=crop',
+    'https://i.imgur.com/x6irQ6l.jpg',
   'kadala curry (black chickpea curry)':
-    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+    'https://i.imgur.com/FUjoSf9.jpg',
   'kokis':
     'https://i.imgur.com/Y3wAAvK.jpg',
   'pol pani pancakes (pani pol)':
