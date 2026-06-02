@@ -54,6 +54,10 @@ const RECIPE_IMAGES = {
     'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
   'parippu curry with pol roti':
     'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+  'egg hoppers':
+    'https://i.imgur.com/sA8A1Jk.jpg',
+  'hoppers with egg curry and pol sambol':
+    'https://i.imgur.com/LIERwek.jpg',
   'roti with lunu miris':
     'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=640&h=420&fit=crop',
   'string hoppers with kiri hodi':
