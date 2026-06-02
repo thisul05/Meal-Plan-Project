@@ -1,57 +1,115 @@
-const SLOT_FALLBACK = {
-  breakfast: 'https://images.unsplash.com/photo-1484980972926-edee96e0960d?w=160&h=160&fit=crop',
-  lunch:     'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=160&h=160&fit=crop',
-  dinner:    'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=160&h=160&fit=crop',
-  snack:     'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=160&h=160&fit=crop',
+// Exact name → Unsplash photo. Keys are lowercased recipe names.
+const RECIPE_IMAGES = {
+
+  /* ── International · Breakfast ──────────────────────────────────────── */
+  'oatmeal with berries':
+    'https://images.unsplash.com/photo-1484980972926-edee96e0960d?w=640&h=420&fit=crop',
+  'greek yogurt parfait':
+    'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=640&h=420&fit=crop',
+  'scrambled eggs on wholegrain toast':
+    'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=640&h=420&fit=crop',
+  'avocado toast with poached egg':
+    'https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=640&h=420&fit=crop',
+  'banana protein smoothie':
+    'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=640&h=420&fit=crop',
+
+  /* ── International · Lunch ───────────────────────────────────────────── */
+  'grilled chicken salad':
+    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=640&h=420&fit=crop',
+  'tuna whole wheat wrap':
+    'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=640&h=420&fit=crop',
+  'red lentil soup':
+    'https://images.unsplash.com/photo-1547592166-5ca6af2e89c5?w=640&h=420&fit=crop',
+  'quinoa buddha bowl':
+    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
+  'turkey and avocado sandwich':
+    'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=640&h=420&fit=crop',
+  'egg and vegetable frittata':
+    'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=640&h=420&fit=crop',
+
+  /* ── International · Dinner ──────────────────────────────────────────── */
+  'baked salmon with roasted vegetables':
+    'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=640&h=420&fit=crop',
+  'chicken stir-fry with brown rice':
+    'https://images.unsplash.com/photo-1598103442097-8b74394b95c3?w=640&h=420&fit=crop',
+  'lean beef and broccoli':
+    'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=640&h=420&fit=crop',
+  'pasta with turkey bolognese':
+    'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=640&h=420&fit=crop',
+  'black bean tacos':
+    'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=640&h=420&fit=crop',
+  'baked cod with sweet potato mash':
+    'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=640&h=420&fit=crop',
+
+  /* ── International · Snacks ──────────────────────────────────────────── */
+  'cottage cheese with pineapple':
+    'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=640&h=420&fit=crop',
+  'apple with almond butter':
+    'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=640&h=420&fit=crop',
+  'hummus with veggie sticks':
+    'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=640&h=420&fit=crop',
+
+  /* ── Sri Lankan · Breakfast ──────────────────────────────────────────── */
+  'sri lankan rice and curry':
+    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+  'parippu curry with pol roti':
+    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+  'roti with lunu miris':
+    'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=640&h=420&fit=crop',
+  // string hoppers, egg hoppers, pittu, kiribath — no accurate Unsplash photos (see note below)
+
+  /* ── Sri Lankan · Lunch / Dinner ─────────────────────────────────────── */
+  'chicken kottu roti':
+    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+  'fish ambul thiyal with rice':
+    'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=640&h=420&fit=crop',
+  'jackfruit curry (polos) with rice':
+    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+  'devilled chicken with fried rice':
+    'https://images.unsplash.com/photo-1598103442097-8b74394b95c3?w=640&h=420&fit=crop',
+  'prawn curry with rice':
+    'https://images.unsplash.com/photo-1565365474-9dc55ca2af1f?w=640&h=420&fit=crop',
+  'gotukola mallum with rice':
+    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
+  'mukunuwenna mallum with rice':
+    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
+  'sri lankan chicken biryani':
+    'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=640&h=420&fit=crop',
+  // lamprais, hoppers with egg curry — no accurate Unsplash photos (see note below)
+
+  /* ── Sri Lankan · Snacks ─────────────────────────────────────────────── */
+  'masala vade':
+    'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=640&h=420&fit=crop',
+  'thala guli (sesame balls)':
+    'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=640&h=420&fit=crop',
+  'kadala curry (black chickpea curry)':
+    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+  // kokis, pol pani pancakes — no accurate Unsplash photos (see note below)
+
+  /* ── Sri Lankan · Complete plates ───────────────────────────────────── */
+  'rice with fish ambul thiyal, parippu & sambol':
+    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+  'rice with prawn curry, parippu & pol sambol':
+    'https://images.unsplash.com/photo-1565365474-9dc55ca2af1f?w=640&h=420&fit=crop',
+  'rice with jackfruit curry, parippu & pol sambol':
+    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
+  'rice with gotukola mallum, parippu & sambol':
+    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
+  'rice with mukunuwenna mallum, parippu & sambol':
+    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
+  'rice with chicken curry, parippu & sambol':
+    'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=640&h=420&fit=crop',
 };
 
-const KEYWORD_IMAGES = [
-  ['salmon',     'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=160&h=160&fit=crop'],
-  ['cod',        'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=160&h=160&fit=crop'],
-  ['fish',       'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=160&h=160&fit=crop'],
-  ['chicken',    'https://images.unsplash.com/photo-1598103442097-8b74394b95c3?w=160&h=160&fit=crop'],
-  ['beef',       'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=160&h=160&fit=crop'],
-  ['steak',      'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=160&h=160&fit=crop'],
-  ['turkey',     'https://images.unsplash.com/photo-1574672280600-4accfa5b6f98?w=160&h=160&fit=crop'],
-  ['egg',        'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=160&h=160&fit=crop'],
-  ['frittata',   'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=160&h=160&fit=crop'],
-  ['smoothie',   'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=160&h=160&fit=crop'],
-  ['oat',        'https://images.unsplash.com/photo-1484980972926-edee96e0960d?w=160&h=160&fit=crop'],
-  ['yogurt',     'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=160&h=160&fit=crop'],
-  ['parfait',    'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=160&h=160&fit=crop'],
-  ['salad',      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=160&h=160&fit=crop'],
-  ['pasta',      'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=160&h=160&fit=crop'],
-  ['bolognese',  'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=160&h=160&fit=crop'],
-  ['soup',       'https://images.unsplash.com/photo-1547592180-85f173990554?w=160&h=160&fit=crop'],
-  ['lentil',     'https://images.unsplash.com/photo-1547592180-85f173990554?w=160&h=160&fit=crop'],
-  ['rice',       'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=160&h=160&fit=crop'],
-  ['curry',      'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=160&h=160&fit=crop'],
-  ['biryani',    'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=160&h=160&fit=crop'],
-  ['wrap',       'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=160&h=160&fit=crop'],
-  ['sandwich',   'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=160&h=160&fit=crop'],
-  ['taco',       'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=160&h=160&fit=crop'],
-  ['hummus',     'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=160&h=160&fit=crop'],
-  ['avocado',    'https://images.unsplash.com/photo-1481349518771-20055b2a7b24?w=160&h=160&fit=crop'],
-  ['toast',      'https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=160&h=160&fit=crop'],
-  ['apple',      'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=160&h=160&fit=crop'],
-  ['fruit',      'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=160&h=160&fit=crop'],
-  ['nut',        'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=160&h=160&fit=crop'],
-  ['almond',     'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=160&h=160&fit=crop'],
-  ['cottage',    'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=160&h=160&fit=crop'],
-  ['pineapple',  'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=160&h=160&fit=crop'],
-  ['hopper',     'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=160&h=160&fit=crop'],
-  ['pittu',      'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=160&h=160&fit=crop'],
-  ['kiribath',   'https://images.unsplash.com/photo-1484980972926-edee96e0960d?w=160&h=160&fit=crop'],
-  ['kottu',      'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=160&h=160&fit=crop'],
-  ['roti',       'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=160&h=160&fit=crop'],
-  ['pol pani',   'https://images.unsplash.com/photo-1484980972926-edee96e0960d?w=160&h=160&fit=crop'],
-  ['thala',      'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=160&h=160&fit=crop'],
-];
+// Slot-based fallback when no name match is found
+const SLOT_FALLBACK = {
+  breakfast: 'https://images.unsplash.com/photo-1484980972926-edee96e0960d?w=640&h=420&fit=crop',
+  lunch:     'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=640&h=420&fit=crop',
+  dinner:    'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=640&h=420&fit=crop',
+  snack:     'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=640&h=420&fit=crop',
+};
 
 export function getMealImage(name, slot) {
-  const n = (name || '').toLowerCase();
-  for (const [kw, url] of KEYWORD_IMAGES) {
-    if (n.includes(kw)) return url;
-  }
-  return SLOT_FALLBACK[slot] || SLOT_FALLBACK.breakfast;
+  const key = (name || '').toLowerCase().trim();
+  return RECIPE_IMAGES[key] || SLOT_FALLBACK[slot] || SLOT_FALLBACK.breakfast;
 }
