@@ -27,6 +27,10 @@ const PAGES = {
     url: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&q=80&fit=crop',
     overlay: 'linear-gradient(160deg,rgba(15,23,42,.7) 0%,rgba(124,58,237,.45) 100%)',
   },
+  '/recipes': {
+    url: 'https://images.unsplash.com/photo-1543353071-873f17a7a088?w=1920&q=80&fit=crop',
+    overlay: 'linear-gradient(160deg,rgba(15,23,42,.72) 0%,rgba(20,83,45,.5) 100%)',
+  },
 };
 
 const FALLBACK = PAGES['/'];

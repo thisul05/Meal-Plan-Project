@@ -16,6 +16,7 @@ function Navbar() {
         🥗 NutriPlanner
       </Link>
       <div className="navbar-actions">
+        <Link to="/recipes" className="nav-link">🍽️ Recipes</Link>
         {user ? (
           <>
             <Link to="/diary"       className="nav-link">📓 Diary</Link>

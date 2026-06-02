@@ -617,3 +617,92 @@ input.has-error, select.has-error { border-color: var(--red); }
 .target-box .target-label { color: rgba(255,255,255,.75); }
 .target-box .target-value { color: white; font-size: 3rem; }
 .target-box .target-unit  { color: rgba(255,255,255,.7); font-size: 1.1rem; }
+
+/* ── Recipe browser ──────────────────────────────────── */
+.rb-search {
+  width: 100%; box-sizing: border-box;
+  padding: .65rem 1rem; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--gray-200); font-size: .95rem; font-family: inherit;
+  margin-bottom: 1rem; outline: none; transition: border-color .15s;
+}
+.rb-search:focus { border-color: var(--blue); }
+
+.rb-tabs {
+  display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .75rem;
+}
+.rb-tab {
+  padding: .4rem .9rem; border-radius: 99px; border: 1.5px solid var(--gray-200);
+  background: white; cursor: pointer; font-size: .82rem; font-weight: 600;
+  font-family: inherit; transition: all .15s; color: var(--gray-600);
+}
+.rb-tab:hover  { border-color: var(--blue); color: var(--blue); }
+.rb-tab.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+.rb-country-tabs {
+  display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem;
+}
+.rb-country-tab {
+  padding: .35rem .85rem; border-radius: 99px; border: 1.5px solid var(--gray-200);
+  background: white; cursor: pointer; font-size: .8rem; font-weight: 600;
+  font-family: inherit; transition: all .15s; color: var(--gray-600);
+}
+.rb-country-tab:hover  { border-color: var(--green); color: var(--green); }
+.rb-country-tab.active { background: var(--green); border-color: var(--green); color: white; }
+
+.rb-count {
+  font-size: .8rem; color: var(--gray-500); margin-bottom: 1rem; font-weight: 600;
+}
+.rb-status {
+  text-align: center; color: var(--gray-500); padding: 2rem 0; font-size: .95rem;
+}
+
+.rb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.rb-card {
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  overflow: hidden; transition: box-shadow .15s, transform .15s;
+  background: white;
+}
+.rb-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+.rb-img-wrap {
+  width: 100%; height: 160px; overflow: hidden;
+}
+.rb-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rb-img-fallback {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem; background: var(--gray-100);
+}
+
+.rb-body { padding: .875rem 1rem 1rem; }
+
+.rb-badges { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .5rem; }
+.rb-slot-badge {
+  font-size: .65rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .08em; border-radius: 99px; padding: .15rem .55rem;
+}
+.rb-country-badge {
+  font-size: .7rem; font-weight: 600; color: var(--gray-500);
+  background: var(--gray-100); border-radius: 99px; padding: .15rem .55rem;
+}
+
+.rb-name {
+  font-weight: 700; font-size: .975rem; line-height: 1.35;
+  margin-bottom: .4rem; color: var(--gray-900);
+}
+
+.rb-macros {
+  display: flex; gap: .6rem; flex-wrap: wrap; font-size: .78rem;
+  color: var(--gray-600); margin-bottom: .5rem;
+}
+.rb-kcal { font-weight: 700; color: var(--gray-900); }
+
+@media (max-width: 600px) {
+  .rb-grid { grid-template-columns: 1fr; }
+  .rb-tabs, .rb-country-tabs { gap: .35rem; }
+}
