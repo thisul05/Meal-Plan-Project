@@ -96,6 +96,8 @@ const RECIPE_IMAGES = {
     'https://i.imgur.com/yBcrbsO.jpg',
 
   /* ── Sri Lankan · Complete plates ───────────────────────────────────── */
+  'rice with fish ambul thiyal, parippu & sambol':
+    'https://i.imgur.com/qxShanM.jpg',
   'rice with prawn curry, parippu & pol sambol':
     'https://images.unsplash.com/photo-1565365474-9dc55ca2af1f?w=640&h=420&fit=crop',
 };

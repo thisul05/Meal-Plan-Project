@@ -151,12 +151,7 @@ function Home() {
                   )}
                 </div>
               </div>
-            ) : (
-              <div style={{ textAlign: 'center', marginTop: '-.5rem', marginBottom: '1.25rem', color: 'var(--gray-600)', fontSize: '.875rem' }}>
-                <Link to="/login" style={{ color: 'var(--blue)', fontWeight: 700 }}>Log in</Link> or{' '}
-                <Link to="/register" style={{ color: 'var(--blue)', fontWeight: 700 }}>sign up</Link> to save this plan.
-              </div>
-            )}
+            ) : null}
           </>
         )}
       </main>
