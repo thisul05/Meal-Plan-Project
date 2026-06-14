@@ -20,7 +20,6 @@ function Navbar() {
         {user ? (
           <>
             <Link to="/progress"    className="nav-link">📈 Progress</Link>
-            <Link to="/diary"       className="nav-link">📓 Diary</Link>
             <Link to="/saved-plans" className="nav-link">📋 My Plans</Link>
             <span className="nav-user">👤 {user.name || user.email}</span>
             <button className="btn-nav-logout" onClick={handleLogout}>Logout</button>

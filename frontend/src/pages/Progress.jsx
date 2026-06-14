@@ -6,7 +6,27 @@ import {
   ReferenceLine, ResponsiveContainer, Legend,
 } from 'recharts';
 import { useAuth } from '../context/AuthContext';
-import { fetchWeight, logWeight, deleteWeight, fetchLogsSummary } from '../services/api';
+import { fetchWeight, logWeight, deleteWeight, fetchLogsSummary, fetchLogs } from '../services/api';
+
+// ── Daily macro bar ───────────────────────────────────────────────────────────
+function MacroBar({ label, value, target, color }) {
+  const pct = target ? Math.min((value / target) * 100, 100) : 0;
+  const over = target && value > target;
+  return (
+    <div style={{ marginBottom: '.875rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '.8rem', fontWeight: 600, marginBottom: '.3rem' }}>
+        <span style={{ color: 'var(--gray-600)' }}>{label}</span>
+        <span style={{ color: over ? 'var(--red)' : 'var(--gray-900)' }}>
+          {value}{label === 'Calories' ? ' kcal' : 'g'}
+          {target ? ` / ${target}${label === 'Calories' ? ' kcal' : 'g'}` : ''}
+        </span>
+      </div>
+      <div style={{ height: 10, background: 'var(--gray-100)', borderRadius: 99, overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${pct}%`, borderRadius: 99, background: over ? 'var(--red)' : color, transition: 'width .5s ease' }} />
+      </div>
+    </div>
+  );
+}
 
 function getStoredTargets() {
   try { return JSON.parse(localStorage.getItem('nutritionTargets')); } catch { return null; }
@@ -145,6 +165,7 @@ export default function Progress() {
 
   const [weightLogs,    setWeightLogs]    = useState([]);
   const [calorieSummary,setCalorieSummary]= useState([]);
+  const [todayLogs,     setTodayLogs]     = useState([]);
   const [loading,       setLoading]       = useState(true);
   const [weightInput,   setWeightInput]   = useState('');
   const [saving,        setSaving]        = useState(false);
@@ -156,18 +177,20 @@ export default function Progress() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [wData, cData] = await Promise.all([
+      const [wData, cData, lData] = await Promise.all([
         fetchWeight(token, range),
         fetchLogsSummary(token, range),
+        fetchLogs(token, todayStr),
       ]);
       setWeightLogs(wData);
       setCalorieSummary(cData);
+      setTodayLogs(lData);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [token, range]);
+  }, [token, range, todayStr]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -216,6 +239,16 @@ export default function Progress() {
   const todayWeight = weightLogs.find(w => w.date === todayStr);
   const motivation  = getMotivation(weightLogs, calorieSummary, targets);
 
+  const todayTotals = todayLogs.reduce(
+    (acc, l) => ({
+      calories: acc.calories + l.calories,
+      protein:  acc.protein  + parseFloat(l.protein),
+      carbs:    acc.carbs    + parseFloat(l.carbs),
+      fat:      acc.fat      + parseFloat(l.fat),
+    }),
+    { calories: 0, protein: 0, carbs: 0, fat: 0 }
+  );
+
   // Bar colours: green if on target, amber if not, gray if no data
   const getBarColor = (entry) => {
     if (!entry.hasData) return 'var(--gray-200)';
@@ -249,6 +282,26 @@ export default function Progress() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Daily Summary */}
+        <div className="card">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 style={{ margin: 0 }}><span className="section-emoji">📊</span> Daily Summary</h2>
+            <Link to="/diary"
+              style={{ fontSize: '.82rem', fontWeight: 700, color: 'white', background: 'var(--blue)', borderRadius: 99, padding: '.35rem .9rem', textDecoration: 'none' }}>
+              ➕ Log Food
+            </Link>
+          </div>
+          {!targets && (
+            <p style={{ fontSize: '.82rem', color: 'var(--gray-600)', marginBottom: '1rem', background: 'var(--blue-lt)', padding: '.6rem .875rem', borderRadius: 6 }}>
+              💡 <Link to="/" style={{ color: 'var(--blue)', fontWeight: 600 }}>Run the calculator</Link> to see your targets here.
+            </p>
+          )}
+          <MacroBar label="Calories" value={Math.round(todayTotals.calories)} target={targets?.targetCalories}          color="var(--blue)"   />
+          <MacroBar label="Protein"  value={Math.round(todayTotals.protein)}  target={targets?.macros?.protein?.grams}  color="var(--blue)"   />
+          <MacroBar label="Carbs"    value={Math.round(todayTotals.carbs)}    target={targets?.macros?.carbs?.grams}    color="var(--green)"  />
+          <MacroBar label="Fat"      value={Math.round(todayTotals.fat)}      target={targets?.macros?.fat?.grams}      color="var(--amber)"  />
         </div>
 
         {/* Log weight */}
