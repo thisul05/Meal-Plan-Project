@@ -47,24 +47,22 @@ function addDays(date, n) {
 }
 
 // ── Motivation engine ─────────────────────────────────────────────────────────
-function getMotivation(weightLogs, calorieSummary, targets) {
+function getMotivation(weightLogs, calorieSummary, targets, goal) {
   const hasWeight   = weightLogs.length > 0;
   const hasCalories = calorieSummary.length > 0;
 
   if (!hasWeight && !hasCalories) {
     return {
-      emoji: '🌱',
-      headline: 'Your journey starts today!',
+      emoji: '🌱', headline: 'Your journey starts today!',
       message: 'Log your weight and start tracking meals. Even one data point is progress.',
-      color: 'var(--blue)',
-      bg: 'var(--blue-lt)',
+      color: 'var(--blue)', bg: 'var(--blue-lt)',
     };
   }
 
-  // Weight trend: compare latest vs 7 days ago
+  // Weight trend vs 7 days ago
   let weightTrend = null;
   if (weightLogs.length >= 2) {
-    const latest = weightLogs[weightLogs.length - 1].weight_kg;
+    const latest  = weightLogs[weightLogs.length - 1].weight_kg;
     const weekAgo = weightLogs.find(w => w.date <= formatDate(addDays(new Date(), -7)));
     if (weekAgo) {
       const diff = latest - weekAgo.weight_kg;
@@ -72,74 +70,216 @@ function getMotivation(weightLogs, calorieSummary, targets) {
     }
   }
 
-  // Calorie adherence: how many of last 7 days hit ±15% of target
+  // Total change from first log
+  const totalChange = weightLogs.length >= 2
+    ? weightLogs[weightLogs.length - 1].weight_kg - weightLogs[0].weight_kg
+    : null;
+
+  // Calorie adherence (last 7 logged days within ±15% of target)
   let adherencePct = null;
   if (hasCalories && targets?.targetCalories) {
     const last7 = calorieSummary.slice(-7);
     const hits = last7.filter(d => {
-      const ratio = d.calories / targets.targetCalories;
-      return ratio >= 0.85 && ratio <= 1.15;
+      const r = d.calories / targets.targetCalories;
+      return r >= 0.85 && r <= 1.15;
     }).length;
     adherencePct = Math.round((hits / last7.length) * 100);
   }
 
-  // Streak: consecutive days with calorie logs
+  // Consecutive logging streak
   let streak = 0;
-  const today = formatDate(new Date());
   for (let i = 0; i < 30; i++) {
-    const ds = formatDate(addDays(new Date(), -i));
-    if (calorieSummary.find(d => d.date === ds)) streak++;
+    if (calorieSummary.find(d => d.date === formatDate(addDays(new Date(), -i)))) streak++;
     else break;
   }
 
-  // Pick message
+  // ── Goal-aware positive messages ─────────────────────────────────────────
   if (streak >= 7) return {
     emoji: '🔥', headline: `${streak}-day logging streak!`,
-    message: 'Incredible consistency. Tracking is the #1 habit that separates people who reach their goals from those who don\'t.',
+    message: `${streak} consecutive days — that's elite consistency. This habit is the foundation everything else is built on. Don't stop now.`,
     color: 'var(--amber)', bg: '#fff7ed',
   };
 
+  if (goal === 'lose') {
+    if (weightTrend === 'losing' && adherencePct >= 70) {
+      const extra = totalChange !== null ? ` You've lost ${Math.abs(totalChange).toFixed(1)} kg in total.` : '';
+      return {
+        emoji: '🎉', headline: 'Fat loss is happening!',
+        message: `Weight is trending down and your nutrition is on point.${extra} Sustainable fat loss exactly like this — keep it up!`,
+        color: 'var(--green)', bg: 'var(--green-lt)',
+      };
+    }
+    if (weightTrend === 'losing') return {
+      emoji: '📉', headline: 'Weight is dropping!',
+      message: 'You\'re losing weight. Tighten your calorie consistency to make this progress even smoother and more predictable.',
+      color: 'var(--blue)', bg: 'var(--blue-lt)',
+    };
+    if (weightTrend === 'stable' && adherencePct >= 70) return {
+      emoji: '🔄', headline: 'Weight holding — stay the course',
+      message: 'Calorie adherence is strong but weight hasn\'t shifted yet. Fat loss often comes in waves rather than a straight line. Give it another week.',
+      color: 'var(--blue)', bg: 'var(--blue-lt)',
+    };
+  }
+
+  if (goal === 'gain') {
+    if (weightTrend === 'gaining' && adherencePct >= 70) {
+      const extra = totalChange !== null ? ` You've added ${totalChange.toFixed(1)} kg total.` : '';
+      return {
+        emoji: '💪', headline: 'Building — stay patient!',
+        message: `Weight climbing at a controlled rate and nutrition is dialled in.${extra} Muscle growth is slow — trust the process.`,
+        color: 'var(--purple)', bg: 'var(--purple-lt)',
+      };
+    }
+    if (weightTrend === 'stable' && adherencePct >= 70) return {
+      emoji: '📊', headline: 'Calories on target, weight is flat',
+      message: 'You\'re eating well but not gaining yet. Try adding 100–150 kcal per day and reassess in two weeks.',
+      color: 'var(--purple)', bg: 'var(--purple-lt)',
+    };
+  }
+
+  if (goal === 'maintain') {
+    if (weightTrend === 'stable' && adherencePct >= 70) return {
+      emoji: '⚖️', headline: 'Perfect maintenance!',
+      message: 'Weight steady, nutrition on point. Maintenance is the hardest mode to sustain — you\'re doing it right.',
+      color: 'var(--blue)', bg: 'var(--blue-lt)',
+    };
+  }
+
+  // ── Generic fallbacks ─────────────────────────────────────────────────────
   if (weightTrend === 'losing' && adherencePct >= 70) return {
     emoji: '🎉', headline: 'You\'re making real progress!',
-    message: 'Your weight is trending down and you\'re hitting your calorie targets. This is exactly what sustainable fat loss looks like — keep going!',
+    message: 'Weight trending down with solid calorie control. This is what sustainable progress looks like — keep going!',
     color: 'var(--green)', bg: 'var(--green-lt)',
   };
-
   if (weightTrend === 'stable' && adherencePct >= 70) return {
-    emoji: '⚖️', headline: 'Perfect maintenance mode!',
-    message: 'You\'re holding steady and staying on target. Maintaining weight is genuinely hard — this takes real discipline.',
+    emoji: '⚖️', headline: 'Holding steady!',
+    message: 'Weight stable and nutrition consistent. That takes real discipline.',
     color: 'var(--blue)', bg: 'var(--blue-lt)',
   };
-
   if (weightTrend === 'gaining' && adherencePct >= 70) return {
     emoji: '💪', headline: 'Building strong!',
-    message: 'You\'re in a controlled surplus and hitting your nutrition targets. Stay patient — muscle takes time but it\'s coming.',
+    message: 'Controlled surplus, consistent logging. Stay patient — the results are accumulating.',
     color: 'var(--purple)', bg: 'var(--purple-lt)',
   };
-
   if (adherencePct !== null && adherencePct < 50) return {
     emoji: '📋', headline: 'Let\'s get back on track',
-    message: `You've hit your calorie target on ${adherencePct}% of logged days. Small, consistent steps beat perfect days followed by nothing. One meal at a time!`,
+    message: `You've hit your calorie target on ${adherencePct}% of logged days. One consistent day beats five perfect days followed by nothing.`,
     color: 'var(--amber)', bg: '#fff7ed',
   };
-
   if (streak >= 3) return {
     emoji: '📈', headline: `${streak} days in a row!`,
-    message: 'Building the logging habit is half the battle. Keep showing up daily and the results will follow.',
+    message: 'Building the logging habit is half the battle. Keep showing up and the results will follow.',
     color: 'var(--green)', bg: 'var(--green-lt)',
   };
-
   if (hasWeight && !hasCalories) return {
     emoji: '🍽️', headline: 'Add meal tracking to complete the picture',
-    message: 'You\'re logging your weight — great start! Pair it with calorie tracking on the Diary page to unlock your full progress chart.',
+    message: 'You\'re logging your weight — great start! Pair it with calorie tracking to unlock your full progress story.',
     color: 'var(--blue)', bg: 'var(--blue-lt)',
   };
-
   return {
     emoji: '🚀', headline: 'Keep the momentum going!',
     message: 'Every log brings you closer to your goal. Consistency over perfection — always.',
     color: 'var(--blue)', bg: 'var(--blue-lt)',
   };
+}
+
+// ── Warning engine ────────────────────────────────────────────────────────────
+function getWarnings(weightLogs, calorieSummary, targets, goal, calcData) {
+  const warnings = [];
+  if (!weightLogs.length && !calorieSummary.length) return warnings;
+
+  // Weekly rate of change (kg/week) over entire log period
+  let weeklyRate = null;
+  if (weightLogs.length >= 2) {
+    const first = weightLogs[0];
+    const last  = weightLogs[weightLogs.length - 1];
+    const days  = (new Date(last.date) - new Date(first.date)) / 86400000;
+    if (days >= 5) weeklyRate = ((last.weight_kg - first.weight_kg) / days) * 7;
+  }
+
+  // 7-day trend
+  let weekTrend = null;
+  if (weightLogs.length >= 2) {
+    const latest  = weightLogs[weightLogs.length - 1].weight_kg;
+    const weekAgo = weightLogs.find(w => w.date <= formatDate(addDays(new Date(), -7)));
+    if (weekAgo) weekTrend = latest - weekAgo.weight_kg;
+  }
+
+  // 1. Goal mismatch: gaining when trying to lose
+  if (goal === 'lose' && weekTrend !== null && weekTrend > 0.2) {
+    warnings.push({
+      emoji: '🚨', headline: 'Gaining weight on a fat-loss plan',
+      message: `Your plan targets weight loss, but you've gained ${weekTrend.toFixed(1)} kg this week. Even healthy foods add up — track every meal, cut liquid calories, and watch portion sizes on calorie-dense foods like rice, oils, and nuts.`,
+      color: '#dc2626', bg: '#fff1f2',
+    });
+  }
+
+  // 2. Goal mismatch: losing when trying to gain
+  if (goal === 'gain' && weekTrend !== null && weekTrend < -0.2) {
+    warnings.push({
+      emoji: '⚠️', headline: 'Losing weight on a bulk plan',
+      message: `Your plan targets weight gain, but you've lost ${Math.abs(weekTrend).toFixed(1)} kg this week. You may be eating less than you think. Try adding a calorie-dense snack like nuts, whole milk, or oats with nut butter.`,
+      color: '#d97706', bg: '#fff7ed',
+    });
+  }
+
+  // 3. Losing too fast (>1.2 kg/week)
+  if (weeklyRate !== null && weeklyRate < -1.2) {
+    warnings.push({
+      emoji: '🚨', headline: `Losing weight too fast (${Math.abs(weeklyRate).toFixed(1)} kg/week)`,
+      message: `Losing more than 1 kg/week risks muscle loss, nutrient deficiencies, and rebound weight gain. Aim for 0.3–0.8 kg/week. Try increasing your daily calories by 150–200 kcal.`,
+      color: '#dc2626', bg: '#fff1f2',
+    });
+  }
+
+  // 4. Gaining too fast when not deliberately bulking (>0.7 kg/week)
+  if (weeklyRate !== null && weeklyRate > 0.7 && goal !== 'gain') {
+    warnings.push({
+      emoji: '⚠️', headline: `Gaining faster than expected (${weeklyRate.toFixed(1)} kg/week)`,
+      message: `At this rate, most of the gain is likely fat rather than muscle. Check if portion sizes have crept up or if you've been skipping tracking on weekends — that's when most overages happen.`,
+      color: '#d97706', bg: '#fff7ed',
+    });
+  }
+
+  // 5. Consistently eating 20%+ over target (4+ of last 7 logged days)
+  if (calorieSummary.length >= 5 && targets?.targetCalories) {
+    const last7    = calorieSummary.slice(-7);
+    const overCount = last7.filter(d => d.calories > targets.targetCalories * 1.2).length;
+    if (overCount >= 4) {
+      warnings.push({
+        emoji: '📊', headline: 'Regularly exceeding your calorie target',
+        message: `You've eaten 20%+ over target on ${overCount} of the last ${last7.length} logged days. Try pre-logging your meals each morning — studies show it cuts daily intake by 200–300 kcal on average.`,
+        color: '#d97706', bg: '#fff7ed',
+      });
+    }
+  }
+
+  // 6. Long logging gap (4+ days) despite having history
+  let daysSinceLog = null;
+  for (let i = 0; i <= 14; i++) {
+    if (calorieSummary.find(d => d.date === formatDate(addDays(new Date(), -i)))) {
+      daysSinceLog = i; break;
+    }
+  }
+  if (daysSinceLog === null) daysSinceLog = 14;
+  if (daysSinceLog >= 4 && calorieSummary.length > 0) {
+    warnings.push({
+      emoji: '📋', headline: `No food logged in ${daysSinceLog >= 14 ? '2+ weeks' : `${daysSinceLog} days`}`,
+      message: `Untracked eating is one of the most common reasons progress stalls. You don't need to be perfect — tracking 80% of your intake still gives you useful data. Log today's meals to get back on track.`,
+      color: '#2563eb', bg: 'var(--blue-lt)',
+    });
+  }
+
+  // 7. BMI danger: underweight but trying to lose more
+  if (calcData?.bmiCategory === 'underweight' && goal === 'lose') {
+    warnings.push({
+      emoji: '🏥', headline: 'BMI is in the underweight range',
+      message: `Your BMI is ${calcData.bmi}. Continuing a calorie deficit from an underweight baseline can seriously harm your health. Please consult a doctor or registered dietitian before proceeding.`,
+      color: '#dc2626', bg: '#fff1f2',
+    });
+  }
+
+  return warnings;
 }
 
 // ── Custom chart tooltip ──────────────────────────────────────────────────────
@@ -170,7 +310,13 @@ function CalorieTooltip({ active, payload, label, target }) {
 export default function Progress() {
   const { token } = useAuth();
 
-  const targets = getEffectiveTargets();
+  const targets  = getEffectiveTargets();
+  const calcData = getCalculatedTargets();
+  const goal     = calcData?.tdee && calcData?.targetCalories
+    ? (calcData.targetCalories < calcData.tdee - 100 ? 'lose'
+       : calcData.targetCalories > calcData.tdee + 100 ? 'gain'
+       : 'maintain')
+    : null;
   const [weightLogs,    setWeightLogs]    = useState([]);
   const [calorieSummary,setCalorieSummary]= useState([]);
   const [todayLogs,     setTodayLogs]     = useState([]);
@@ -245,7 +391,8 @@ export default function Progress() {
   }));
 
   const todayWeight = weightLogs.find(w => w.date === todayStr);
-  const motivation  = getMotivation(weightLogs, calorieSummary, targets);
+  const motivation  = getMotivation(weightLogs, calorieSummary, targets, goal);
+  const warnings    = getWarnings(weightLogs, calorieSummary, targets, goal, calcData);
 
   const todayTotals = todayLogs.reduce(
     (acc, l) => ({
@@ -291,6 +438,23 @@ export default function Progress() {
             </div>
           </div>
         </div>
+
+        {/* Warnings */}
+        {warnings.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
+            {warnings.map((w, i) => (
+              <div key={i} className="card" style={{ background: w.bg, borderLeft: `4px solid ${w.color}`, padding: '1rem 1.25rem' }}>
+                <div style={{ display: 'flex', gap: '.875rem', alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: '1.5rem', lineHeight: 1, flexShrink: 0 }}>{w.emoji}</span>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '.92rem', color: w.color, marginBottom: '.25rem' }}>{w.headline}</div>
+                    <p style={{ margin: 0, fontSize: '.84rem', color: 'var(--gray-700)', lineHeight: 1.6 }}>{w.message}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Daily Summary */}
         <div className="card">
