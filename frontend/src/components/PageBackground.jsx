@@ -31,6 +31,10 @@ const PAGES = {
     url: 'https://images.unsplash.com/photo-1543353071-873f17a7a088?w=1920&q=80&fit=crop',
     overlay: 'linear-gradient(160deg,rgba(15,23,42,.72) 0%,rgba(20,83,45,.5) 100%)',
   },
+  '/progress': {
+    url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&q=80&fit=crop',
+    overlay: 'linear-gradient(160deg,rgba(15,23,42,.72) 0%,rgba(30,58,138,.5) 100%)',
+  },
 };
 
 const FALLBACK = PAGES['/'];

@@ -10,6 +10,7 @@ const authRoutes       = require('./routes/auth');
 const savedPlanRoutes  = require('./routes/savedPlans');
 const logsRoutes       = require('./routes/logs');
 const foodRoutes       = require('./routes/food');
+const weightRoutes     = require('./routes/weight');
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use('/api/auth',         authRoutes);
 app.use('/api/saved-plans',  savedPlanRoutes);
 app.use('/api/logs',         logsRoutes);
 app.use('/api/food',         foodRoutes);
+app.use('/api/weight',       weightRoutes);
 
 // 404 handler — catches any unmatched routes
 app.use((_req, res) => {

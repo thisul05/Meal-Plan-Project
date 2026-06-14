@@ -9,6 +9,7 @@ import VerifyEmail  from './pages/VerifyEmail';
 import SavedPlans   from './pages/SavedPlans';
 import Diary        from './pages/Diary';
 import Recipes      from './pages/Recipes';
+import Progress     from './pages/Progress';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/saved-plans"  element={<SavedPlans />} />
           <Route path="/diary"        element={<Diary />} />
           <Route path="/recipes"      element={<Recipes />} />
+          <Route path="/progress"     element={<Progress />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

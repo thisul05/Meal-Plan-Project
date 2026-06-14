@@ -130,6 +130,28 @@ export async function deleteLog(token, id) {
   return handleResponse(res);
 }
 
+// ── Weight Tracking ───────────────────────────────────────────────────────────
+
+export async function fetchWeight(token, days = 30) {
+  const res = await fetch(`${BASE}/weight?days=${days}`, { headers: headers(token) });
+  return handleResponse(res);
+}
+
+export async function logWeight(token, weight_kg, date) {
+  const res = await fetch(`${BASE}/weight`, {
+    method: 'POST', headers: headers(token),
+    body: JSON.stringify({ weight_kg, date }),
+  });
+  return handleResponse(res);
+}
+
+export async function deleteWeight(token, id) {
+  const res = await fetch(`${BASE}/weight/${id}`, {
+    method: 'DELETE', headers: headers(token),
+  });
+  return handleResponse(res);
+}
+
 // ── Food Search (USDA proxy) ──────────────────────────────────────────────────
 
 export async function searchFood(token, query) {

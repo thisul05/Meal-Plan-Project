@@ -19,6 +19,7 @@ function Navbar() {
         <Link to="/recipes" className="nav-link">🍽️ Recipes</Link>
         {user ? (
           <>
+            <Link to="/progress"    className="nav-link">📈 Progress</Link>
             <Link to="/diary"       className="nav-link">📓 Diary</Link>
             <Link to="/saved-plans" className="nav-link">📋 My Plans</Link>
             <span className="nav-user">👤 {user.name || user.email}</span>
