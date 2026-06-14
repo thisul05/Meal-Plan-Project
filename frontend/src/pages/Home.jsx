@@ -22,6 +22,8 @@ function Home() {
   const [error, setError]                     = useState(null);
   const [savedMsg, setSavedMsg]               = useState('');
   const [loggedMsg, setLoggedMsg]             = useState('');
+  const [macroForm,   setMacroForm]           = useState(null);
+  const [macroMsg,    setMacroMsg]            = useState('');
 
   async function handleCalculate(profileData) {
     setCalcLoading(true);
@@ -34,6 +36,14 @@ function Home() {
       setCountry(profileData.country || 'all');
       setAge(profileData.age);
       localStorage.setItem('nutritionTargets', JSON.stringify(result));
+      localStorage.removeItem('macroPreferences');
+      setMacroForm({
+        calories: result.targetCalories,
+        protein:  result.macros.protein.grams,
+        carbs:    result.macros.carbs.grams,
+        fat:      result.macros.fat.grams,
+      });
+      setMacroMsg('');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -121,6 +131,79 @@ function Home() {
         {nutritionResult && (
           <>
             <ResultsCard result={nutritionResult} />
+
+            {/* Macro customizer */}
+            {macroForm && (
+              <div className="card">
+                <h2><span className="section-emoji">⚙️</span> Adjust Your Macro Targets</h2>
+                <p style={{ fontSize: '.82rem', color: 'var(--gray-600)', marginBottom: '1.1rem' }}>
+                  These are your calculated targets. Tweak any value and save — your Progress tracker will use the updated numbers.
+                </p>
+                <form onSubmit={e => {
+                  e.preventDefault();
+                  const cal  = parseInt(macroForm.calories);
+                  const prot = parseInt(macroForm.protein);
+                  const carb = parseInt(macroForm.carbs);
+                  const fat  = parseInt(macroForm.fat);
+                  if (!cal || !prot || !carb || !fat) return;
+                  const custom = {
+                    useCustom: true,
+                    targetCalories: cal,
+                    macros: {
+                      protein: { grams: prot, percent: Math.round((prot * 4 / cal) * 100) },
+                      carbs:   { grams: carb, percent: Math.round((carb * 4 / cal) * 100) },
+                      fat:     { grams: fat,  percent: Math.round((fat  * 9 / cal) * 100) },
+                    },
+                  };
+                  localStorage.setItem('macroPreferences', JSON.stringify(custom));
+                  setMacroMsg('✅ Custom targets saved!');
+                  setTimeout(() => setMacroMsg(''), 2500);
+                }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '.75rem', marginBottom: '1rem' }}>
+                    {[
+                      { key: 'calories', label: 'Calories (kcal)', min: 800,  max: 6000 },
+                      { key: 'protein',  label: 'Protein (g)',     min: 20,   max: 500  },
+                      { key: 'carbs',    label: 'Carbs (g)',       min: 20,   max: 800  },
+                      { key: 'fat',      label: 'Fat (g)',         min: 10,   max: 300  },
+                    ].map(({ key, label, min, max }) => (
+                      <div key={key}>
+                        <label style={{ fontSize: '.72rem', color: 'var(--gray-500)', fontWeight: 700, display: 'block', marginBottom: '.3rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+                          {label}
+                        </label>
+                        <input
+                          type="number" min={min} max={max} required
+                          value={macroForm[key]}
+                          onChange={e => setMacroForm(f => ({ ...f, [key]: e.target.value }))}
+                          style={{ width: '100%', padding: '.55rem .75rem', border: '1.5px solid var(--gray-200)', borderRadius: 8, fontSize: '.9rem', fontWeight: 600, boxSizing: 'border-box' }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <button type="submit" className="btn-secondary" style={{ padding: '.6rem 1.4rem', fontSize: '.875rem' }}>
+                      💾 Save Custom Targets
+                    </button>
+                    <button type="button"
+                      onClick={() => {
+                        localStorage.removeItem('macroPreferences');
+                        setMacroForm({
+                          calories: nutritionResult.targetCalories,
+                          protein:  nutritionResult.macros.protein.grams,
+                          carbs:    nutritionResult.macros.carbs.grams,
+                          fat:      nutritionResult.macros.fat.grams,
+                        });
+                        setMacroMsg('↩ Reset to calculated values.');
+                        setTimeout(() => setMacroMsg(''), 2500);
+                      }}
+                      style={{ background: 'none', border: '1.5px solid var(--gray-300)', borderRadius: 8, padding: '.55rem 1.1rem', cursor: 'pointer', fontSize: '.875rem', fontWeight: 600, color: 'var(--gray-600)', fontFamily: 'inherit' }}>
+                      ↩ Reset to Calculated
+                    </button>
+                  </div>
+                  {macroMsg && <p style={{ marginTop: '.6rem', fontSize: '.85rem', color: macroMsg.startsWith('✅') ? 'var(--green)' : 'var(--gray-600)' }}>{macroMsg}</p>}
+                </form>
+              </div>
+            )}
+
             <AdviceBox advice={nutritionResult.advice} />
             <button className="btn-secondary" onClick={handleGeneratePlan} disabled={planLoading}>
               {planLoading ? '⏳ Building your meal plan…' : '🍽 Generate My Meal Plan'}

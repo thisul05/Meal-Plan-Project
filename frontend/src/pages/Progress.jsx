@@ -170,7 +170,7 @@ function CalorieTooltip({ active, payload, label, target }) {
 export default function Progress() {
   const { token } = useAuth();
 
-  const [targets,       setTargets]       = useState(() => getEffectiveTargets());
+  const targets = getEffectiveTargets();
   const [weightLogs,    setWeightLogs]    = useState([]);
   const [calorieSummary,setCalorieSummary]= useState([]);
   const [todayLogs,     setTodayLogs]     = useState([]);
@@ -179,25 +179,6 @@ export default function Progress() {
   const [saving,        setSaving]        = useState(false);
   const [saveMsg,       setSaveMsg]       = useState('');
   const [range,         setRange]         = useState(30);
-
-  // ── Macro preferences state ───────────────────────────────────────────────
-  const calcTargets = getCalculatedTargets();
-  const [prefMode, setPrefMode] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('macroPreferences'))?.useCustom ? 'custom' : 'auto'; } catch { return 'auto'; }
-  });
-  const [customForm, setCustomForm] = useState(() => {
-    try {
-      const p = JSON.parse(localStorage.getItem('macroPreferences'));
-      const c = getCalculatedTargets();
-      return {
-        calories: p?.targetCalories         ?? c?.targetCalories         ?? '',
-        protein:  p?.macros?.protein?.grams ?? c?.macros?.protein?.grams ?? '',
-        carbs:    p?.macros?.carbs?.grams   ?? c?.macros?.carbs?.grams   ?? '',
-        fat:      p?.macros?.fat?.grams     ?? c?.macros?.fat?.grams     ?? '',
-      };
-    } catch { return { calories: '', protein: '', carbs: '', fat: '' }; }
-  });
-  const [savePrefMsg, setSavePrefMsg] = useState('');
 
   const todayStr = formatDate(new Date());
 
@@ -242,41 +223,6 @@ export default function Progress() {
   async function handleDelete(id) {
     await deleteWeight(token, id);
     setWeightLogs(prev => prev.filter(w => w.id !== id));
-  }
-
-  function saveCustomTargets(e) {
-    e.preventDefault();
-    const cal  = parseInt(customForm.calories);
-    const prot = parseInt(customForm.protein);
-    const carb = parseInt(customForm.carbs);
-    const fat  = parseInt(customForm.fat);
-    if (!cal || !prot || !carb || !fat) return;
-    const custom = {
-      useCustom: true,
-      targetCalories: cal,
-      macros: {
-        protein: { grams: prot, percent: Math.round((prot * 4 / cal) * 100) },
-        carbs:   { grams: carb, percent: Math.round((carb * 4 / cal) * 100) },
-        fat:     { grams: fat,  percent: Math.round((fat  * 9 / cal) * 100) },
-      },
-    };
-    localStorage.setItem('macroPreferences', JSON.stringify(custom));
-    setTargets(custom);
-    setSavePrefMsg('✅ Custom targets saved!');
-    setTimeout(() => setSavePrefMsg(''), 2500);
-  }
-
-  function switchToAuto() {
-    try {
-      const pref = JSON.parse(localStorage.getItem('macroPreferences')) || {};
-      localStorage.setItem('macroPreferences', JSON.stringify({ ...pref, useCustom: false }));
-    } catch { /* ignore */ }
-    setTargets(getCalculatedTargets());
-    setPrefMode('auto');
-  }
-
-  function switchToCustom() {
-    setPrefMode('custom');
   }
 
   // Build 30-day grid so missing days show as gaps, not missing bars
@@ -364,81 +310,6 @@ export default function Progress() {
           <MacroBar label="Protein"  value={Math.round(todayTotals.protein)}  target={targets?.macros?.protein?.grams}  color="var(--blue)"   />
           <MacroBar label="Carbs"    value={Math.round(todayTotals.carbs)}    target={targets?.macros?.carbs?.grams}    color="var(--green)"  />
           <MacroBar label="Fat"      value={Math.round(todayTotals.fat)}      target={targets?.macros?.fat?.grams}      color="var(--amber)"  />
-        </div>
-
-        {/* Macro target preferences */}
-        <div className="card">
-          <h2><span className="section-emoji">⚙️</span> Macro Targets</h2>
-          <p style={{ fontSize: '.82rem', color: 'var(--gray-600)', marginBottom: '1rem' }}>
-            Use the targets calculated by the planner, or set your own custom values.
-          </p>
-
-          <div style={{ display: 'flex', gap: '.5rem', marginBottom: '1.25rem' }}>
-            {[['auto', 'Auto (Calculated)'], ['custom', 'Custom']].map(([mode, label]) => (
-              <button key={mode}
-                onClick={mode === 'auto' ? switchToAuto : switchToCustom}
-                style={{
-                  padding: '.45rem 1.1rem', borderRadius: 99, border: 'none', cursor: 'pointer',
-                  fontSize: '.82rem', fontWeight: 700,
-                  background: prefMode === mode ? 'var(--blue)' : 'var(--gray-100)',
-                  color: prefMode === mode ? 'white' : 'var(--gray-700)',
-                  transition: 'background .2s, color .2s',
-                }}>
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {prefMode === 'auto' ? (
-            calcTargets ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '.75rem' }}>
-                {[
-                  { label: 'Calories', value: `${calcTargets.targetCalories} kcal` },
-                  { label: 'Protein',  value: `${calcTargets.macros?.protein?.grams}g` },
-                  { label: 'Carbs',    value: `${calcTargets.macros?.carbs?.grams}g` },
-                  { label: 'Fat',      value: `${calcTargets.macros?.fat?.grams}g` },
-                ].map(({ label, value }) => (
-                  <div key={label} style={{ padding: '.75rem', background: 'var(--gray-100)', borderRadius: 8, border: '1.5px solid var(--gray-200)' }}>
-                    <div style={{ fontSize: '.72rem', color: 'var(--gray-500)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>{label}</div>
-                    <div style={{ fontWeight: 800, fontSize: '1rem', marginTop: '.25rem' }}>{value}</div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p style={{ fontSize: '.82rem', color: 'var(--gray-600)', background: 'var(--blue-lt)', padding: '.6rem .875rem', borderRadius: 6 }}>
-                💡 <Link to="/" style={{ color: 'var(--blue)', fontWeight: 600 }}>Run the calculator</Link> to get auto-calculated targets.
-              </p>
-            )
-          ) : (
-            <form onSubmit={saveCustomTargets}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '.75rem', marginBottom: '1rem' }}>
-                {[
-                  { key: 'calories', label: 'Calories (kcal)', min: 800,  max: 6000 },
-                  { key: 'protein',  label: 'Protein (g)',     min: 20,   max: 500  },
-                  { key: 'carbs',    label: 'Carbs (g)',       min: 20,   max: 800  },
-                  { key: 'fat',      label: 'Fat (g)',         min: 10,   max: 300  },
-                ].map(({ key, label, min, max }) => (
-                  <div key={key}>
-                    <label style={{ fontSize: '.72rem', color: 'var(--gray-500)', fontWeight: 700, display: 'block', marginBottom: '.3rem', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                      {label}
-                    </label>
-                    <input
-                      type="number" min={min} max={max} required
-                      value={customForm[key]}
-                      onChange={e => setCustomForm(f => ({ ...f, [key]: e.target.value }))}
-                      style={{ width: '100%', padding: '.55rem .75rem', border: '1.5px solid var(--gray-200)', borderRadius: 8, fontSize: '.9rem', fontWeight: 600, boxSizing: 'border-box' }}
-                    />
-                  </div>
-                ))}
-              </div>
-              <button type="submit" className="btn-secondary" style={{ padding: '.6rem 1.5rem', fontSize: '.875rem' }}>
-                💾 Save Custom Targets
-              </button>
-              {savePrefMsg && (
-                <p style={{ marginTop: '.5rem', fontSize: '.85rem', color: 'var(--green)' }}>{savePrefMsg}</p>
-              )}
-            </form>
-          )}
         </div>
 
         {/* Log weight */}
